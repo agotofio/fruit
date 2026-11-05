@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:1080px;overflow:hidden;position:relative;font-family:Inter,'Noto Color Emoji',sans-serif;color:#f3f4f7;
+ background:radial-gradient(circle at 70% 35%,#26314f 0%,#12141c 55%,#0a0b10 100%)}
+#left{position:absolute;left:110px;top:110px;width:880px}
+#badge{display:inline-block;font-size:24px;font-weight:700;letter-spacing:3px;color:#0a0b10;background:#7fb2ff;padding:8px 18px;border-radius:12px}
+#title{font-size:62px;line-height:1.08;font-weight:800;margin:24px 0 38px;letter-spacing:-.5px}
+.cap{display:flex;gap:18px;align-items:flex-start;font-size:29px;line-height:1.3;color:#8a91a6;margin-bottom:20px}
+.cap .ic{flex:0 0 40px;height:40px;border-radius:50%;background:#262c3e;color:#7fb2ff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.cap.on{color:#fff;font-size:33px;font-weight:500}
+.cap.on .ic{background:#7fb2ff;color:#0a0b10}
+.cap.done .ic{background:#24563d;color:#b9f3cf}
+.cap.warn.on{color:#ff9d9d}.cap.warn .ic{background:#5a2328;color:#ffb3b3}
+#prog{position:absolute;left:110px;right:110px;bottom:46px;display:flex;gap:10px}
+#prog div{flex:1;height:8px;border-radius:4px;background:#232838}
+#prog div.d{background:#3e5f97}#prog div.c{background:#7fb2ff}
+#steplbl{position:absolute;left:110px;bottom:70px;font-size:20px;color:#6f7790;letter-spacing:2px}
+
+#phoneWrap{position:absolute;left:1120px;top:110px;width:420px;height:860px;perspective:2400px}
+#phone{position:absolute;inset:0;transform-style:preserve-3d}
+.face{position:absolute;inset:0;border-radius:68px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+#front{background:#1b1e27;box-shadow:0 40px 90px rgba(0,0,0,.6),inset 0 0 0 4px #6a7184,inset 0 0 0 9px #22262f}
+#back{transform:rotateY(180deg);background:linear-gradient(150deg,#dfe8f1,#b4c5d6);box-shadow:0 40px 90px rgba(0,0,0,.6),inset 0 0 0 4px #9fb0c2}
+.sbtn{position:absolute;width:7px;background:#6a7184;border-radius:3px}
+.sbtn.hot{background:#7fb2ff;box-shadow:0 0 18px 4px rgba(127,178,255,.8)}
+#cam{position:absolute;left:26px;top:26px;width:176px;height:176px;border-radius:44px;background:rgba(170,190,210,.65);box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.lens{position:absolute;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#3a4a6a 0,#0b0f18 45%,#000 70%);box-shadow:0 0 0 7px #8796a8,0 0 0 9px #c9d4df}
+#screen{position:absolute;left:14px;top:14px;width:392px;height:832px;border-radius:56px;overflow:hidden;background:#000}
+#content{position:absolute;inset:0}
+#ov{position:absolute;inset:0;z-index:20;pointer-events:none}
+#sb{position:absolute;left:0;right:0;top:0;height:54px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:6px 34px 0 46px;font-weight:600;font-size:18px}
+#sb.dark{color:#000}#sb.light{color:#fff}
+#sb .ri{display:flex;gap:7px;align-items:center}
+.bars{display:flex;gap:2px;align-items:flex-end;height:13px}
+.bars i{width:3.5px;background:currentColor;border-radius:1px;opacity:.25}.bars i.f{opacity:1}
+.batt{width:27px;height:13px;border:1.5px solid currentColor;border-radius:4px;padding:1.5px;opacity:.9}
+.batt i{display:block;height:100%;background:currentColor;border-radius:1.5px}
+#island{position:absolute;top:13px;left:50%;margin-left:-62px;width:124px;height:36px;border-radius:20px;background:#000;z-index:40}
+#finger{position:absolute;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:rgba(255,255,255,.42);border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45);z-index:50;opacity:0}
+#finger .rp{position:absolute;inset:-6px;border-radius:50%;border:4px solid #7fb2ff;opacity:0}
+#extra{position:absolute;inset:0;pointer-events:none}
+
+/* iOS */
+.scr{position:absolute;inset:0;background:#f2f2f7;color:#000;overflow:hidden;font-size:19px}
+.bigt{font-size:35px;font-weight:800;padding:64px 20px 14px}
+.navb{height:46px;margin-top:54px;display:flex;align-items:center;justify-content:center;position:relative;font-weight:600;font-size:18px;padding:0 70px;text-align:center;white-space:nowrap}
+.navb .bk{position:absolute;left:10px;color:#0a7aff;font-weight:400}
+.navb+.body{padding-top:14px}
+.grp{background:#fff;border-radius:12px;margin:0 16px 24px;overflow:hidden}
+.row{display:flex;align-items:center;min-height:50px;padding:0 14px;position:relative;white-space:nowrap}
+.row+.row:before{content:'';position:absolute;left:14px;right:0;top:0;height:1px;background:#e3e3e8}
+.row .ico{flex:0 0 31px;height:31px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-right:12px;color:#fff;font-weight:700}
+.row .lb{flex:1;overflow:hidden;text-overflow:ellipsis}
+.row .val{color:#8a8a8e;margin:0 6px 0 8px;font-size:17px}
+.row .ch{color:#c4c4c7;font-size:24px;line-height:1}
+.row.pr{background:#d6d6db}
+.prof{min-height:76px}
+.av{flex:0 0 54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#9aa6b8,#6c778a);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:20px}
+.sub{font-size:14px;color:#6d6d72;margin-top:2px}
+.tg{flex:0 0 52px;height:32px;border-radius:16px;background:#e5e5ea;position:relative}
+.tg i{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.tg.on{background:#34c759}.tg.on i{left:22px}
+.foot{font-size:14px;color:#6d6d72;margin:-16px 32px 22px;line-height:1.35;white-space:normal}
+.hdr{font-size:14px;color:#6d6d72;margin:0 32px 6px}
+.hlb{position:absolute;border-radius:12px;border:4px solid;z-index:15}
+.tag{position:absolute;padding:6px 12px;border-radius:10px;font-size:16px;font-weight:700;color:#fff;white-space:nowrap;z-index:16}
+.card{position:absolute;background:#1c2130;border:1px solid #2f3650;border-radius:22px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.5);color:#e9ecf3;font-size:20px;line-height:1.35}
+.card h3{font-size:19px;letter-spacing:2px;color:#7fb2ff;margin-bottom:12px}
+.alert{position:absolute;left:46px;right:46px;background:rgba(242,242,247,.97);border-radius:16px;text-align:center;color:#000;overflow:hidden;box-shadow:0 0 0 900px rgba(0,0,0,.4),0 10px 40px rgba(0,0,0,.35)}
+.alert .at{font-weight:700;font-size:18px;padding:18px 16px 4px}
+.alert .am{font-size:14px;padding:0 16px 14px;line-height:1.35}
+.alert .ab{display:flex;border-top:1px solid #d0d0d5}
+.alert .ab div{flex:1;padding:12px;color:#0a7aff;font-size:18px}
+.alert .ab div+div{border-left:1px solid #d0d0d5;font-weight:600}
+.mag{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:7px solid #f3f4f7;background:rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.mag:after{content:'';position:absolute;width:16px;height:70px;background:#f3f4f7;border-radius:8px;right:-30px;bottom:-62px;transform:rotate(-45deg)}
+.lock{background:linear-gradient(165deg,#2f4fc9,#7b47c8 55%,#d9709f);color:#fff;text-align:center}
+.lock .ld{margin-top:104px;font-size:21px;font-weight:600}.lock .lt{font-size:98px;font-weight:700;line-height:1;letter-spacing:-2px}
+.appi{position:absolute;width:62px;height:62px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+</style></head><body>
+<div id="left"><div id="badge"></div><div id="title"></div><div id="caps"></div></div>
+<div id="steplbl"></div><div id="prog"></div>
+<div id="phoneWrap"><div id="phone">
+ <div class="face" id="front">
+  <div class="sbtn" id="b-sw" style="left:-6px;top:150px;height:34px"></div>
+  <div class="sbtn" id="b-vu" style="left:-6px;top:215px;height:70px"></div>
+  <div class="sbtn" id="b-vd" style="left:-6px;top:300px;height:70px"></div>
+  <div class="sbtn" id="b-pw" style="right:-6px;top:250px;height:110px"></div>
+  <div id="screen"><div id="content"></div><div id="ov"></div>
+   <div id="sb" class="light"><span>9:41</span><span class="ri"><span id="net" style="font-size:15px"></span><span class="bars" id="bars"><i style="height:4px"></i><i style="height:7px"></i><i style="height:10px"></i><i style="height:13px"></i></span><span id="wifi" style="font-size:15px">◠</span><span class="batt"><i id="battf" style="width:80%"></i></span></span></div>
+   <div id="island"></div><div id="finger"><div class="rp"></div></div></div>
+ </div>
+ <div class="face" id="back"><div id="cam">
+   <div class="lens" style="left:14px;top:14px"></div><div class="lens" style="left:92px;top:92px"></div>
+   <div style="position:absolute;left:124px;top:30px;width:20px;height:20px;border-radius:50%;background:#f4efe0;box-shadow:0 0 0 3px #c9d4df"></div></div>
+   <div id="msring" style="position:absolute;left:110px;top:330px;width:200px;height:200px;border-radius:50%;border:5px solid rgba(255,255,255,0);"></div>
+ </div>
+</div></div>
+<div id="extra"></div>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const seg=(t,a,b)=>ease(clamp((t-a)/(b-a)));
+const lin=(t,a,b)=>clamp((t-a)/(b-a));
+const lerp=(a,b,p)=>a+(b-a)*p;
+const win=(t,a,b,f=.35)=>Math.min(seg(t,a,a+f),1-seg(t,b-f,b));
+const SCR=$('screen'),CONTENT=$('content'),OV=$('ov'),EXTRA=$('extra');
+const PX=1120,PY=110; // phone origin on page
+let L={};
+function mk(parent,html){const d=document.createElement('div');d.innerHTML=html.trim();const e=d.firstElementChild;parent.appendChild(e);return e;}
+function posOf(sel){const el=typeof sel==='string'?SCR.querySelector(sel):sel;let x=0,y=0,e=el;while(e&&e!==SCR){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent;}return [x+el.offsetWidth/2,y+el.offsetHeight/2,el.offsetWidth,el.offsetHeight];}
+// ---------- iOS builders
+const R=(id,lb,o={})=>`<div class="row${o.cls?' '+o.cls:''}" id="${id}">${o.ic?`<div class="ico" style="background:${o.c||'#8e8e93'}">${o.ic}</div>`:''}<div class="lb"${o.red?' style="color:#ff3b30"':o.blue?' style="color:#0a7aff"':''}>${lb}</div>${o.val!=null?`<div class="val">${o.val}</div>`:''}${o.tg!=null?`<div class="tg${o.tg?' on':''}" id="${id}-tg"><i></i></div>`:''}${(o.ch===false||o.tg!=null)?'':'<div class="ch">›</div>'}</div>`;
+const G=(...rows)=>`<div class="grp">${rows.join('')}</div>`;
+const page=(title,body,o={})=>`<div class="scr"${o.bg?` style="background:${o.bg}"`:''}>${o.back?`<div class="navb"><span class="bk" style="font-size:34px;font-weight:300">‹</span>${title}</div>`:`<div class="bigt">${title}</div>`}<div class="body">${body}</div></div>`;
+const SETTINGS=p=>page('Настройки',G(`<div class="row prof" id="${p}prof"><div class="av">ИП</div><div class="lb"><b>Иван П.</b><div class="sub">Apple ID, iCloud, контент и покупки</div></div><div class="ch">›</div></div>`)
+ +G(R(p+'wifi','Wi‑Fi',{ic:'📶',c:'#0a7aff',val:'Home'}),R(p+'bt','Bluetooth',{ic:'ᛒ',c:'#0a7aff',val:'Вкл.'}),R(p+'cell','Сотовая связь',{ic:'📡',c:'#34c759'}))
+ +G(R(p+'gen','Основные',{ic:'⚙️',c:'#8e8e93'}),R(p+'fid','Face ID и код‑пароль',{ic:'🙂',c:'#34c759'}),R(p+'bat','Аккумулятор',{ic:'🔋',c:'#34c759'}),R(p+'priv','Конфиденциальность и безопасность',{ic:'✋',c:'#0a7aff'})));
+const GENERAL=p=>page('Основные',G(R(p+'about','Об этом устройстве'),R(p+'upd','Обновление ПО'))+G(R(p+'date','Дата и время'),R(p+'kb','Клавиатура'))+G(R(p+'vpn','VPN и управление устройством'))+G(R(p+'reset','Перенос или сброс iPhone')),{back:'Настройки'});
+const ABOUT=p=>page('Об этом устройстве',G(R(p+'name','Имя',{val:'iPhone'}),R(p+'ios','Версия iOS',{val:'26.1'}),R(p+'mname','Название модели',{val:'iPhone 15',ch:false}),R(p+'mnum','Номер модели',{val:`<span id="${p}mnv">A3090</span>`,ch:false}),R(p+'ser','Серийный номер',{val:'F2LX9K7QWN',ch:false}),R(p+'cap','Ёмкость',{val:'128 ГБ',ch:false}))+G(R(p+'parts','Детали и история обслуживания'))+G(R(p+'imei','IMEI',{val:'35 398765 432109 8',ch:false})),{back:'Основные'});
+const LOCK=(extra='')=>`<div class="scr lock"><div class="ld">среда, 5 ноября</div><div class="lt">9:41</div>${extra}</div>`;
+function HOME(){let h='<div class="scr lock" style="text-align:left">';const ic=['📷','📅','🖼️','💬','🗺️','⏰','🎵','📝','⚙️','📞','🌤️','🧭','📚','🎮','💳','📺'];const bg=['#1c1c1e','#fff','#fff','#34c759','#e9f0e2','#1c1c1e','#fc3c44','#fff','#8e8e93','#34c759','#3d8bfd','#fff','#ff9500','#5856d6','#1c1c1e','#000'];
+ ic.forEach((e,i)=>{const x=26+(i%4)*88,y=86+Math.floor(i/4)*104;h+=`<div class="appi" id="ap${i}" style="left:${x}px;top:${y}px;background:${bg[i]}">${e}</div>`});
+ h+='<div style="position:absolute;left:12px;right:12px;bottom:12px;height:96px;border-radius:34px;background:rgba(255,255,255,.25)"></div>';
+ ['📞','🧭','💬','🎵'].forEach((e,i)=>{h+=`<div class="appi" style="left:${32+i*86}px;bottom:29px;background:${['#34c759','#fff','#34c759','#fc3c44'][i]}">${e}</div>`});return h+'</div>';}
+// ---------- nav, finger, highlights
+function navBuild(list){L.nav=list.map(([at,h,o],i)=>{const e=mk(CONTENT,h);e.style.zIndex=i+1;return {at,el:e,fade:o&&o.fade}});}
+function navUpdate(t){const N=L.nav;if(!N)return;N.forEach((n,i)=>{const p=i==0?1:seg(t,n.at,n.at+.45);const nx=N[i+1];const q=nx&&!nx.fade?seg(t,nx.at,nx.at+.45):0;
+ if(n.fade){n.el.style.opacity=p;n.el.style.transform='none';}else n.el.style.transform=`translateX(${(1-p)*100-30*q}%)`;
+ const covered=(N[i+1]&&t>N[i+1].at+.5);n.el.style.visibility=(p<=0||covered)?'hidden':'visible';});}
+function finger(t,path){const F=$('finger');if(!path||!path.length){F.style.opacity=0;return;}
+ const P=path.map(p=>{const a=Array.isArray(p.at)?p.at:posOf(p.at);return {...p,xy:a}});
+ const last=P[P.length-1];const t0=P[0].t-.45,t1=last.t+(last.hold||0)+.7;
+ F.style.opacity=Math.min(seg(t,t0,t0+.3),1-seg(t,t1-.3,t1));
+ let xy=P[0].xy;
+ if(t<P[0].t){const k=seg(t,t0,P[0].t);xy=[P[0].xy[0]+50*(1-k),P[0].xy[1]+110*(1-k)];}
+ for(let i=0;i<P.length;i++){const p=P[i];if(t>=p.t){xy=p.xy;const n=P[i+1];if(n){const ms=Math.max(p.t+(p.hold||0)+(p.tap?.35:0),n.t-(n.mv||.55));if(t>ms){const k=n.lin?lin(t,ms,n.t):seg(t,ms,n.t);xy=[lerp(p.xy[0],n.xy[0],k),lerp(p.xy[1],n.xy[1],k)];}}}}
+ let pressed=false,rip=-1;CONTENT.querySelectorAll('.pr').forEach(e=>e.classList.remove('pr'));
+ P.forEach((p,i)=>{if(p.tap&&t>=p.t&&t<p.t+.45){pressed=t<p.t+.25;rip=(t-p.t)/.45;if(typeof p.at==='string'&&t<p.t+.4){const e=SCR.querySelector(p.at);if(e&&e.classList.contains('row'))e.classList.add('pr');}}
+  if(p.hold&&t>=p.t&&t<p.t+p.hold){pressed=true;rip=((t-p.t)%.8)/.8;}
+  if(p.press&&P[i+1]&&t>=p.t&&t<P[i+1].t){pressed=true;}});
+ F.style.left=xy[0]+'px';F.style.top=xy[1]+'px';F.style.transform=`scale(${pressed?.82:1})`;
+ const rp=F.firstChild;if(rip>=0){rp.style.opacity=1-rip;rp.style.transform=`scale(${1+rip*1.1})`;}else rp.style.opacity=0;}
+function hlBox(sel,color,label,o={}){const [x,y,w,h]=posOf(sel);const pad=o.pad??4;const b=mk(OV,`<div class="hlb" style="left:${x-w/2-pad}px;top:${y-h/2-pad}px;width:${w+2*pad}px;height:${h+2*pad}px;border-color:${color};box-shadow:0 0 18px ${color}"></div>`);
+ let tg=null;if(label){tg=mk(OV,`<div class="tag" style="background:${color};${o.above?`bottom:${832-(y-h/2-pad)+6}px`:`top:${y+h/2+pad+6}px`};${o.right?`right:${o.right}px`:`left:${Math.max(10,x-w/2-pad)}px`}">${label}</div>`);}
+ return {set(op){b.style.opacity=op;b.style.transform=`scale(${1+.04*Math.sin(Date.now())*0})`;if(tg){tg.style.opacity=op;}}};}
+function setSB(mode,o={}){const s=$('sb');s.className=mode;s.style.opacity=o.hide?0:1;const lv=o.sig??4;[...$('bars').children].forEach((b,i)=>b.className=i<lv?'f':'');$('net').textContent=o.net??'';$('wifi').style.opacity=o.wifi===false?0:1;$('battf').style.width=(o.batt??80)+'%';}
+function phoneT(o={}){$('phone').style.transform=`translate(${o.x||0}px,${o.y||0}px) rotateY(${o.ry||0}deg) rotateZ(${o.rz||0}deg) scale(${o.s||1})`;}
+function card(html,x,y,w){return mk(EXTRA,`<div class="card" style="left:${x}px;top:${y}px;width:${w}px">${html}</div>`);}
+function showCard(c,t,a,b=1e9){const p=win(t,a,b);c.style.opacity=p;c.style.transform=`translateY(${(1-p)*30}px)`;}
+function typeText(t,a,b,s){return s.slice(0,Math.round(lin(t,a,b)*s.length));}
+const ROOT=document.documentElement;
+// ---------- scenes
+const SC=[];
+// 0 intro
+SC.push({dur:6,badge:'ГАЙД',title:'Как проверить Б/У iPhone 15 перед покупкой',caps:[[.8,'15 проверок по порядку'],[1.8,'В каждом шаге показано, куда нажимать и на что смотреть']],
+ build(){navBuild([[0,LOCK()]]);setSB('light');},
+ update(t){phoneT({y:(1-seg(t,0,1.2))*260,rz:(1-seg(t,0,1.2))*-8});$('phoneWrap').style.opacity=seg(t,0,.8);}});
+// 1 IMEI before meeting
+SC.push({step:1,dur:14,badge:'ШАГ 1 • ДО ВСТРЕЧИ',title:'Проверьте IMEI заранее',caps:[[.3,'Попросите у продавца IMEI в переписке'],[4.8,'Введите его на checkcoverage.apple.com'],[8.8,'Модель и дата должны совпадать с объявлением'],[11.2,'Отказ назвать IMEI — повод не ехать',1]],
+ build(){navBuild([[0,`<div class="scr" style="background:#fff"><div style="margin-top:54px;height:62px;border-bottom:1px solid #e5e5ea;display:flex;align-items:center;gap:12px;padding:0 16px"><span style="color:#0a7aff;font-size:26px">‹</span><div class="av" style="flex:0 0 40px;height:40px;font-size:15px">П</div><b>Продавец</b></div><div id="chat" style="padding:16px 14px;display:flex;flex-direction:column;gap:10px"></div></div>`],
+   [4.8,`<div class="scr" style="background:#fff"><div style="margin-top:54px;padding:10px 14px"><div style="background:#eeeef0;border-radius:12px;padding:10px 14px;font-size:16px;color:#333;text-align:center">🔒 checkcoverage.apple.com</div></div>
+    <div style="padding:22px 22px"><div style="font-size:27px;font-weight:800;line-height:1.15;margin-bottom:18px">Проверка права на обслуживание</div>
+    <div style="font-size:15px;color:#666;margin-bottom:8px">Серийный номер или IMEI</div><div id="inp" style="border:2px solid #0a7aff;border-radius:12px;height:50px;padding:12px;font-size:19px"></div>
+    <div id="cbtn" style="margin-top:16px;background:#0a7aff;color:#fff;text-align:center;border-radius:12px;padding:13px;font-weight:600">Продолжить</div>
+    <div id="res" style="margin-top:22px;border-radius:16px;background:#f5f5f7;padding:16px;display:flex;gap:14px;align-items:center"><div style="font-size:54px">📱</div><div><b style="font-size:20px">iPhone 15</b><div style="font-size:15px;color:#333;margin-top:4px">128 ГБ, чёрный</div><div style="font-size:15px;color:#1a8f3c;margin-top:6px">✓ Дата покупки подтверждена</div></div></div></div></div>`]]);
+  setSB('dark');
+  L.b=[mk($('chat'),`<div style="align-self:flex-end;max-width:78%;background:#0a7aff;color:#fff;border-radius:18px;padding:10px 14px;font-size:17px">Здравствуйте! Пришлите, пожалуйста, IMEI и скрин «Об этом устройстве»</div>`),
+   mk($('chat'),`<div style="align-self:flex-start;background:#e9e9eb;border-radius:18px;padding:10px 14px;font-size:17px">Конечно: 35 398765 432109 8</div>`),
+   mk($('chat'),`<div style="align-self:flex-start;background:#e9e9eb;border-radius:14px;padding:6px;width:170px"><div style="background:#f2f2f7;border-radius:10px;height:150px;padding:8px;font-size:9px;color:#555">Об этом устройстве<br><br>Название модели iPhone 15<br>Ёмкость 128 ГБ<br>IMEI 35 398765 432109 8</div></div>`)];
+  L.h=hlBox('#res','#34c759','✓ Совпадает с объявлением');},
+ update(t){L.b.forEach((b,i)=>{const p=seg(t,[1,2.6,3.4][i],[1,2.6,3.4][i]+.35);b.style.opacity=p;b.style.transform=`translateY(${(1-p)*14}px)`});
+  const inp=SCR.querySelector('#inp');inp.textContent=typeText(t,5.6,7.2,'353987654321098');SCR.querySelector('#res').style.opacity=seg(t,8.1,8.5);
+  L.h.set(win(t,8.8,13.6));finger(t,[{t:5.5,at:'#inp',tap:1},{t:7.6,at:'#cbtn',tap:1}]);}});
+// 2 exterior
+SC.push({step:2,dur:15,badge:'ШАГ 2 • ВНЕШНИЙ ОСМОТР',title:'Корпус, камеры и винты',caps:[[.3,'Под ярким светом осмотрите рамку и заднее стекло'],[4.6,'Стёкла камер — без сколов и пыли внутри'],[7.8,'Экран лежит ровно: зазор = вздутая батарея'],[10.8,'Винты у разъёма без царапин — иначе вскрывали']],
+ build(){navBuild([[0,LOCK()]]);setSB('light');
+  L.mag=mk(EXTRA,'<div class="mag"></div>');L.mt=mk(EXTRA,'<div class="tag" style="background:#3b6fd8;font-size:20px"></div>');
+  L.c1=card(`<h3>ВИД СБОКУ</h3><svg width="276" height="190" viewBox="0 0 276 190"><text x="0" y="18" fill="#9fe3b8" font-size="17" font-family="Inter">✓ Норма</text><rect x="0" y="34" width="270" height="20" rx="10" fill="#6a7184"/><rect x="4" y="30" width="262" height="6" rx="3" fill="#111"/>
+   <text x="0" y="110" fill="#ff9d9d" font-size="17" font-family="Inter">✕ Вздутие батареи</text><rect x="0" y="140" width="270" height="20" rx="10" fill="#6a7184"/><path d="M4 136 Q135 104 266 136" stroke="#111" stroke-width="6" fill="none"/><path d="M60 132 Q135 116 210 132" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 4" fill="none"/></svg>`,1575,330,320);
+  L.c2=card(`<h3>ВИД СНИЗУ</h3><svg width="276" height="90" viewBox="0 0 276 90"><rect x="0" y="20" width="276" height="50" rx="25" fill="#6a7184"/>${[...Array(6)].map((_,i)=>`<circle cx="${28+i*12}" cy="45" r="3.5" fill="#1b1e27"/>`).join('')}${[...Array(6)].map((_,i)=>`<circle cx="${188+i*12}" cy="45" r="3.5" fill="#1b1e27"/>`).join('')}<rect x="113" y="35" width="50" height="20" rx="10" fill="#1b1e27"/><circle cx="100" cy="45" r="5" fill="#c9d0db"/><path d="M97 45h6M100 42v6" stroke="#555" stroke-width="1.4"/><circle cx="176" cy="45" r="5" fill="#c9d0db"/><path d="M173 45h6M176 42v6" stroke="#555" stroke-width="1.4"/><circle cx="176" cy="45" r="14" fill="none" stroke="#ff6b6b" stroke-width="3"/></svg><div style="font-size:18px;margin-top:8px">Винты (пентолоб) должны быть целые, без сорванных шлицов</div>`,1575,560,320);},
+ update(t){const rot=seg(t,.6,2)*180-seg(t,7.8,8.9)*180;const z=seg(t,4.6,5.6)-seg(t,7.4,8.2);phoneT({ry:rot,s:1+z*.5,x:z*100,y:z*240});
+  const pts=[[1150,180],[1515,260],[1520,820],[1150,900],[1150,400]];const k=lin(t,1.9,4.4)*(pts.length-1);const i=Math.min(pts.length-2,Math.floor(k));const f=ease(k-i);
+  let mx=lerp(pts[i][0],pts[i+1][0],f),my=lerp(pts[i][1],pts[i+1][1],f),mo=win(t,1.9,4.5);
+  if(t>4.6&&t<7.6){mx=1300;my=330;mo=win(t,5.4,7.5);}
+  L.mag.style.left=mx+'px';L.mag.style.top=my+'px';L.mag.style.opacity=mo;
+  L.mt.textContent=t<4.6?'Ищем сколы и вмятины':'✓ Стёкла целые, пыли нет';L.mt.style.background=t<4.6?'#3b6fd8':'#1f9d55';L.mt.style.left=(mx+90)+'px';L.mt.style.top=(my-20)+'px';L.mt.style.opacity=mo;
+  showCard(L.c1,t,8.2);showCard(L.c2,t,11);}});
+// 3 IMEI match
+SC.push({step:3,dur:13,badge:'ШАГ 3 • СВЕРКА IMEI',title:'IMEI должен совпадать везде',caps:[[.3,'Откройте «Телефон» и наберите *#06#'],[3.7,'На экране появится IMEI'],[5.8,'Сравните: Настройки → Основные → Об этом устройстве'],[8.8,'…и с наклейкой на коробке'],[10.8,'У версии США (LL/A) лотка SIM нет — только eSIM']],
+ build(){const keys=['1','2','3','4','5','6','7','8','9','*','0','#'];let kp='';keys.forEach((k,i)=>{kp+=`<div id="k${k=='*'?'s':k=='#'?'h':k}" style="position:absolute;left:${46+(i%3)*108}px;top:${300+Math.floor(i/3)*100}px;width:82px;height:82px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:34px">${k}</div>`});
+  navBuild([[0,`<div class="scr" style="background:#fff"><div id="disp" style="position:absolute;top:170px;width:100%;text-align:center;font-size:40px;font-weight:500;letter-spacing:2px"></div>${kp}<div style="position:absolute;left:154px;top:705px;width:82px;height:82px;border-radius:50%;background:#34c759;color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center">📞</div>
+   <div id="imeiAl" class="alert" style="top:300px;opacity:0"><div class="at">Информация об устройстве</div><div class="am" style="text-align:left;font-size:15px;line-height:1.6">IMEI<br><b style="font-size:19px">35 398765 432109 8</b><br>EID<br>8904 9032 0000 0000 0000 1234 5678</div><div class="ab"><div>ОК</div></div></div></div>`],[5.8,ABOUT('a')]]);
+  setSB('dark');L.h=hlBox('#aimei','#34c759','✓ Совпадает',{above:1});
+  L.c=card(`<h3>КОРОБКА</h3><div style="background:#f4f4f6;border-radius:10px;padding:12px;color:#111;font-size:15px;line-height:1.5"><b>iPhone 15</b> 128GB<br>IMEI/MEID<br><b style="font-size:17px">35 398765 432109 8</b><div style="height:34px;margin-top:6px;background:repeating-linear-gradient(90deg,#111 0 2px,#fff 2px 4px,#111 4px 5px,#fff 5px 8px)"></div></div><div style="color:#9fe3b8;margin-top:12px">✓ Тот же номер</div>`,1575,420,300);},
+ update(t){const seq='*#06#';const ids=['#ks','#kh','#k0','#k6','#kh'];const tt=[.9,1.4,1.9,2.4,2.9];
+  SCR.querySelector('#disp').textContent=seq.slice(0,tt.filter(x=>t>=x).length);
+  ids.forEach((id,i)=>{SCR.querySelector(id).style.background=(t>=tt[i]&&t<tt[i]+.3)?'#b8b8bf':'#e5e5ea'});
+  ['#k1','#k2','#k3','#k4','#k5','#k7','#k8','#k9','#k0','#k6','#kh','#ks'].forEach(()=>{});
+  const al=SCR.querySelector('#imeiAl');const p=seg(t,3.4,3.8);al.style.opacity=p;al.style.transform=`scale(${.9+.1*p})`;
+  L.h.set(win(t,6.6,12.6));showCard(L.c,t,8.8);
+  finger(t,tt.map((x,i)=>({t:x,at:ids[i],tap:1,mv:.3})));}});
+// 4 model
+SC.push({step:4,dur:14,badge:'ШАГ 4 • МОДЕЛЬ И РЕГИОН',title:'Расшифруйте номер модели',caps:[[.3,'Настройки → Основные → Об этом устройстве'],[3.8,'Нажмите на «Номер модели» — появится код вида MTP03LL/A'],[6.6,'Первая буква — история телефона'],[10.6,'Окончание — регион: LL/A = США, только eSIM']],
+ build(){navBuild([[0,SETTINGS('s')],[1.5,GENERAL('g')],[2.9,ABOUT('a')]]);setSB('dark');
+  L.h=hlBox('#amnum','#7fb2ff');
+  L.c=card(`<h3>ПЕРВАЯ БУКВА</h3><div id="lg" style="font-size:20px;line-height:1.3">${[['M','новый, из магазина','#9fe3b8'],['F','восстановленный (refurbished)','#ffd27f'],['N','выдан взамен по гарантии','#ffd27f'],['P','с персональной гравировкой','#c9d0db']].map(([a,b,c],i)=>`<div id="lg${i}" style="display:flex;gap:12px;padding:8px;border-radius:10px;margin-bottom:4px"><b style="font-size:28px;color:${c};width:26px">${a}</b><span>${b}</span></div>`).join('')}</div>`,1575,300,320);},
+ update(t){const v=SCR.querySelector('#amnv');v.innerHTML=t<4.4?'A3090':`<b style="color:#0a7aff;font-size:20px">M</b>TP03<b style="color:${t>10.6?'#ff9500':'#8a8a8e'}">LL/A</b>`;
+  L.h.set(win(t,3.8,13.6));showCard(L.c,t,6.8);SCR.querySelector('#amnum').style.background=t>4.4?'#eaf2ff':'#fff';
+  for(let i=0;i<4;i++)$('lg'+i).style.background=(i==0&&t>8)?'rgba(127,178,255,.18)':'transparent';
+  finger(t,[{t:1.1,at:'#sgen',tap:1},{t:2.5,at:'#gabout',tap:1},{t:4.2,at:'#amnum',tap:1}]);}});
+// 5 Apple ID
+SC.push({step:5,dur:20,badge:'ШАГ 5 • САМОЕ ВАЖНОЕ',title:'Apple ID и блокировка активации',caps:[[.3,'Настройки → нажмите на имя владельца'],[2.6,'Локатор → «Найти iPhone» → выключить'],[6.2,'Пароль Apple ID вводит сам продавец'],[10.2,'Основные → Перенос или сброс → Стереть контент и настройки'],[14.4,'«VPN и управление устройством»: профилей быть не должно'],[17.2,'Не выходит из Apple ID — не покупайте!',1]],
+ build(){navBuild([[0,SETTINGS('s')],[1.3,page('Apple ID',`<div style="text-align:center;margin:-4px 0 18px"><div class="av" style="width:84px;height:84px;margin:0 auto 8px;font-size:30px">ИП</div><b style="font-size:24px">Иван П.</b><div class="sub">ivan@example.com</div></div>`+G(R('i1','Личные данные'),R('i2','Вход и безопасность'),R('i3','Оплата и доставка'))+G(R('icl','iCloud',{ic:'☁️',c:'#3d8bfd',val:'50 ГБ'}),R('ifm','Локатор',{ic:'📍',c:'#34c759'}),R('ifam','Семейный доступ',{ic:'👪',c:'#3d8bfd'}))+G(R('iout','Выйти',{red:1,ch:false})),{back:'Настройки'})],
+   [3.3,page('Локатор',G(R('fm1','Найти iPhone',{val:'<span id="fmv">Вкл.</span>'}))+G(R('fm2','Поделиться геопозицией',{tg:false})),{back:'Apple ID'})],
+   [4.5,page('Найти iPhone',G(R('fmt','Найти iPhone',{tg:true}))+'<div class="foot">Позволяет найти, заблокировать или стереть iPhone. Пока функция включена, без пароля владельца телефон не активировать.</div>'+G(R('fmn','Сеть Локатора',{tg:true}),R('fml','Последняя геопозиция',{tg:true})),{back:'Локатор'})],
+   [10.2,GENERAL('g')],[11.4,page('Перенос или сброс',`<div style="height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px"><div style="font-size:70px">📲</div><b style="font-size:22px">Подготовка к новому iPhone</b></div>`+G(R('rs1','Сбросить',{blue:1,ch:false}),R('rs2','Стереть контент и настройки',{blue:1,ch:false})),{back:'Основные'})],
+   [13.4,GENERAL('h')],[14.4,page('VPN и управление устройством',G(R('v1','VPN',{val:'Не подключено'}))+`<div style="text-align:center;margin-top:120px;color:#6d6d72;font-size:17px" id="noprof"><div style="font-size:60px;margin-bottom:10px">🛡️</div>Профили конфигурации<br>не установлены</div>`,{back:'Основные'})]]);
+  setSB('dark');
+  L.al=mk(OV,`<div class="alert" style="top:260px"><div class="at">Пароль Apple ID</div><div class="am">Введите пароль для «ivan@example.com», чтобы выключить «Найти iPhone».</div><div style="margin:0 16px 14px;background:#fff;border-radius:8px;height:36px;text-align:left;padding:6px 10px;font-size:20px;letter-spacing:3px" id="pw"></div><div class="ab"><div>Отменить</div><div id="pwok">Выключить</div></div></div>`);
+  L.ok=mk(OV,`<div class="tag" style="background:#1f9d55;left:30px;top:420px;font-size:18px;padding:10px 14px">✓ Блокировка активации снята</div>`);
+  L.h1=hlBox('#rs2','#ff9500','Телефон сотрётся и будет «чистым»');L.h2=hlBox('#noprof','#34c759','✓ MDM нет',{pad:12});
+  L.c=card(`<div style="font-size:40px">🚫</div><div style="font-size:22px;font-weight:700;color:#ff9d9d;margin:8px 0">«Кирпич»</div>Телефон с чужим Apple ID нельзя активировать. Разблокировать его законно невозможно.`,1575,360,310);},
+ update(t){const tg=SCR.querySelector('#fmt-tg');tg.className='tg'+(t<8.6?' on':'');SCR.querySelector('#fmv').textContent=t<8.6?'Вкл.':'Выкл.';
+  const a=win(t,5.7,8.5,.25);L.al.style.opacity=a;L.al.style.transform=`scale(${.92+.08*a})`;SCR.querySelector('#pw').textContent='•'.repeat(Math.round(lin(t,6.5,7.6)*10));
+  const o=win(t,8.8,10,.25);L.ok.style.opacity=o;L.h1.set(win(t,12.6,14.3));L.h2.set(win(t,15.2,19.6));showCard(L.c,t,17.2);
+  const pk=SCR.querySelector('#pwok');pk.style.background=(t>8.0&&t<8.3)?'#d6d6db':'transparent';
+  finger(t,[{t:1,at:'#sprof',tap:1},{t:3.0,at:'#ifm',tap:1},{t:4.2,at:'#fm1',tap:1},{t:5.4,at:'#fmt-tg',tap:1},{t:8.0,at:'#pwok',tap:1},{t:10.9,at:'#greset',tap:1,mv:.6},{t:12.2,at:'#rs2',tap:1},{t:14.1,at:'#hvpn',tap:1}]);}});
+// 6 parts
+SC.push({step:6,dur:13,badge:'ШАГ 6 • ОРИГИНАЛЬНОСТЬ',title:'Детали и история обслуживания',caps:[[.3,'Основные → Об этом устройстве'],[2.6,'Откройте «Детали и история обслуживания»'],[5.2,'«Оригинальная деталь Apple» — всё в порядке'],[8.2,'«Неизвестная деталь» — стоит неоригинал',1],[10.6,'Нет True Tone / Face ID после замены — тоже признак']],
+ build(){navBuild([[0,GENERAL('g')],[1.3,ABOUT('a')],[3.8,page('Детали и история',`<div class="hdr">ДЕТАЛИ</div>`+G(`<div class="row" id="pt1" style="min-height:64px"><div class="lb"><b>Аккумулятор</b><div class="sub" style="color:#1a8f3c">✓ Оригинальная деталь Apple</div></div></div>`,`<div class="row" id="pt2" style="min-height:64px"><div class="lb"><b>Камера</b><div class="sub" style="color:#1a8f3c">✓ Оригинальная деталь Apple</div></div></div>`,`<div class="row" id="pt3" style="min-height:64px"><div class="lb"><b>Дисплей</b><div class="sub" style="color:#ff9500">⚠ Неизвестная деталь</div></div><div class="ch">›</div></div>`)+'<div class="foot">Пример: экран заменён на неоригинальный.</div>',{back:'Об этом устройстве'})]]);
+  setSB('dark');L.g=hlBox('#pt1','#34c759');L.g2=hlBox('#pt2','#34c759');L.r=hlBox('#pt3','#ff3b30','Неоригинальный экран');},
+ update(t){L.g.set(win(t,5.2,8.1));L.g2.set(win(t,5.2,8.1));L.r.set(win(t,8.2,12.6));
+  finger(t,[{t:.9,at:'#gabout',tap:1},{t:3.4,at:'#aparts',tap:1}]);}});
+// 7 battery
+SC.push({step:7,dur:14,badge:'ШАГ 7 • АККУМУЛЯТОР',title:'Ёмкость и циклы зарядки',caps:[[.3,'Настройки → Аккумулятор → Состояние и зарядка'],[3.4,'Максимальная ёмкость: от 85% — хорошо'],[7.2,'Количество циклов: чем меньше, тем лучше'],[9.8,'Даты производства и первого использования — сверьте с рассказом продавца']],
+ build(){navBuild([[0,SETTINGS('s')],[1.3,page('Аккумулятор',G(R('bp','Заряд в процентах',{tg:true}),R('blp','Режим энергосбережения',{tg:false}))+G(R('bh','Состояние и зарядка',{val:'89%'}))+`<div class="grp" style="height:200px;padding:16px;display:flex;align-items:flex-end;gap:6px">${[...Array(24)].map((_,i)=>`<div style="flex:1;background:#34c759;height:${20+Math.abs(Math.sin(i*.7))*140}px;border-radius:2px"></div>`).join('')}</div>`,{back:'Настройки'})],
+  [2.7,page('Состояние и зарядка',G(`<div class="row" id="bcap" style="min-height:96px;flex-direction:column;align-items:stretch;justify-content:center"><div style="display:flex"><span class="lb">Максимальная ёмкость</span><b id="capv" style="font-size:22px">0%</b></div><div style="height:8px;background:#e5e5ea;border-radius:4px;margin-top:10px"><div id="capb" style="height:100%;width:0;background:#34c759;border-radius:4px"></div></div></div>`)
+   +G(R('bcyc','Количество циклов',{val:'<b id="cycv" style="color:#000">0</b>',ch:false}),R('bmf','Дата производства',{val:'август 2023',ch:false}),R('bfu','Первое использование',{val:'октябрь 2023',ch:false})),{back:'Аккумулятор'})]]);
+  setSB('dark');L.h=hlBox('#bcap','#34c759');L.h2=hlBox('#bcyc','#7fb2ff');L.h3=hlBox('#bmf','#ff9500',null,{pad:2});L.h4=hlBox('#bfu','#ff9500',null,{pad:2});
+  L.c=card(`<h3>ОРИЕНТИР</h3><div style="position:relative;height:30px;border-radius:15px;background:linear-gradient(90deg,#e5484d 0 40%,#f5a524 40% 60%,#30a46c 60%);margin:14px 0 8px"><div id="mk" style="position:absolute;top:-10px;width:6px;height:50px;background:#fff;border-radius:3px;left:0"></div></div><div style="display:flex;justify-content:space-between;font-size:16px;color:#aab"><span>70%</span><span>80%</span><span>85%</span><span>100%</span></div><div style="margin-top:14px;font-size:18px"><span style="color:#9fe3b8">≥85%</span> — отлично<br><span style="color:#ffd27f">80–84%</span> — нормально<br><span style="color:#ff9d9d">&lt;80%</span> — нужна замена</div>`,1575,320,320);},
+ update(t){const c=Math.round(seg(t,3.4,4.8)*89);SCR.querySelector('#capv').textContent=c+'%';SCR.querySelector('#capb').style.width=c+'%';
+  SCR.querySelector('#cycv').textContent=Math.round(seg(t,7.2,8.4)*312);$('mk').style.left=(seg(t,4.8,5.8)*((89-70)/30)*100)+'%';
+  L.h.set(win(t,3.4,7.1));L.h2.set(win(t,7.2,9.7));L.h3.set(win(t,9.8,13.6));L.h4.set(win(t,9.8,13.6));showCard(L.c,t,4.4);
+  finger(t,[{t:1,at:'#sbat',tap:1},{t:2.4,at:'#bh',tap:1}]);}});
+// 8 display
+SC.push({step:8,dur:20,badge:'ШАГ 8 • ЭКРАН',title:'Пиксели, засветы, сенсор',caps:[[.3,'Белая картинка на весь экран: пятна, битые пиксели'],[3,'Чёрная картинка: засветы по краям'],[5.4,'Пункт управления → удерживайте яркость → нужна кнопка True Tone'],[10.2,'Удерживайте иконку и проведите по всему экрану'],[15.4,'Во время звонка у уха экран должен гаснуть']],
+ build(){navBuild([[0,`<div class="scr" style="background:#fff"></div>`],[2.9,`<div class="scr" style="background:#000"><div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:radial-gradient(ellipse at 50% 120%,rgba(120,130,160,.55),transparent 70%)"></div></div>`,{fade:1}],[5.2,HOME(),{fade:1}],
+  [15.2,`<div class="scr" style="background:linear-gradient(#3a3a3c,#1c1c1e);color:#fff;text-align:center"><div style="margin-top:120px;font-size:30px">Мама</div><div style="color:#aaa;margin-top:6px" id="ctime">00:03</div><div style="display:grid;grid-template-columns:repeat(3,80px);gap:28px;justify-content:center;margin-top:220px">${['🔇','⌨️','🔊','➕','📹','👤'].map(e=>`<div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:30px">${e}</div>`).join('')}</div><div style="width:80px;height:80px;border-radius:50%;background:#ff3b30;margin:40px auto;font-size:32px;display:flex;align-items:center;justify-content:center">📞</div></div>`,{fade:1}]]);
+  setSB('dark');L.dot=mk(CONTENT,`<div style="position:absolute;left:250px;top:330px;width:5px;height:5px;background:#222;z-index:2"></div>`);
+  L.ring=mk(OV,`<div style="position:absolute;left:222px;top:302px;width:60px;height:60px;border-radius:50%;border:4px solid #ff3b30"></div>`);L.rt=mk(OV,`<div class="tag" style="background:#ff3b30;left:150px;top:370px">Битый пиксель</div>`);
+  L.glow=mk(OV,`<div class="tag" style="background:#ff9500;left:110px;bottom:140px">Засвет у края</div>`);
+  L.cc=mk(OV,`<div style="position:absolute;inset:0;background:rgba(20,20,30,.55);backdrop-filter:blur(14px)"><div style="position:absolute;left:30px;top:90px;display:grid;grid-template-columns:repeat(2,150px);gap:16px">${['📶 Wi‑Fi','ᛒ Bluetooth','✈️','🔦'].map(e=>`<div style="height:72px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">${e}</div>`).join('')}</div><div id="bri" style="position:absolute;left:46px;top:270px;width:72px;height:170px;border-radius:22px;background:rgba(255,255,255,.2);overflow:hidden"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:#fff"></div><div style="position:absolute;bottom:12px;width:100%;text-align:center;font-size:24px">☀️</div></div></div>`);
+  L.bri=mk(OV,`<div style="position:absolute;inset:0;background:rgba(20,20,30,.75);backdrop-filter:blur(18px)"><div style="position:absolute;left:126px;top:110px;width:140px;height:370px;border-radius:36px;background:rgba(255,255,255,.2);overflow:hidden"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:#fff"></div><div style="position:absolute;bottom:20px;width:100%;text-align:center;font-size:36px">☀️</div></div><div style="position:absolute;top:540px;left:0;right:0;display:flex;justify-content:center;gap:30px;color:#fff;font-size:14px;text-align:center">${[['🌙','Тёмный'],['☀︎','True Tone'],['🌅','Night Shift']].map(([e,l],i)=>`<div><div id="bb${i}" style="width:70px;height:70px;border-radius:50%;background:${i==1?'#0a7aff':'rgba(255,255,255,.25)'};display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 6px">${e}</div>${l}</div>`).join('')}</div></div>`);
+  L.tt=hlBox('#bb1','#34c759','✓ True Tone есть — экран родной',{pad:8,right:20});
+  L.trail=mk(OV,`<svg style="position:absolute;inset:0" width="392" height="832"><polyline id="trl" fill="none" stroke="#7fb2ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 10" points=""/></svg>`);
+  L.head=mk(EXTRA,`<div style="position:absolute;top:150px;width:300px;height:380px;border-radius:50% 45% 45% 50%;background:linear-gradient(90deg,#e8b894,#c98f6a);box-shadow:0 20px 60px rgba(0,0,0,.4)"><div style="position:absolute;left:-26px;top:150px;width:60px;height:100px;border-radius:50%;background:#d9a07b"></div></div>`);
+  L.blk=mk(OV,`<div style="position:absolute;inset:0;background:#000"></div>`);L.bt=mk(EXTRA,`<div class="tag" style="background:#1f9d55;font-size:20px;left:1150px;top:620px">✓ Экран погас — датчик работает</div>`);},
+ update(t){setSB(t>2.9&&t<15.2?'light':t>=15.2?'light':'dark',{hide:t<5.2});
+  const r=win(t,1.8,2.8,.2);L.ring.style.opacity=r;L.rt.style.opacity=r;L.dot.style.opacity=t<2.9?1:0;L.glow.style.opacity=win(t,3.5,5.1,.2);
+  L.cc.style.opacity=win(t,5.9,8.0,.25)*(t<7.5?1:0)+0;L.cc.style.transform=`translateY(${-(1-seg(t,5.6,6.1))*60}px)`;L.bri.style.opacity=win(t,7.4,10,.25);L.tt.set(win(t,8.2,10));
+  const path=[[60,130],[330,130],[330,330],[60,330],[60,540],[330,540],[330,740],[60,740]];
+  const dk=lin(t,11.4,14.8)*(path.length-1);let pts=[path[0]];for(let i=1;i<path.length;i++){if(i<=dk)pts.push(path[i]);else{const f=dk-(i-1);if(f>0)pts.push([lerp(path[i-1][0],path[i][0],f),lerp(path[i-1][1],path[i][1],f)]);break;}}
+  SCR.querySelector('#trl').setAttribute('points',t>11.3?pts.map(p=>p.join(',')).join(' '):'');L.trail.style.opacity=win(t,11.3,15.1,.2);
+  for(let i=0;i<16;i++){const e=SCR.querySelector('#ap'+i);const j=t>10.8&&t<15;e.style.transform=j?`rotate(${Math.sin(t*28+i)*3}deg)`:'none';}
+  const ap=SCR.querySelector('#ap1');const cur=pts[pts.length-1];if(t>11.3&&t<15.1){ap.style.left=(cur[0]-31)+'px';ap.style.top=(cur[1]-31)+'px';ap.style.zIndex=5;ap.style.transform='scale(1.15)';}else{ap.style.left='114px';ap.style.top='86px';}
+  const hx=lerp(1900,1505,seg(t,15.9,16.8))+seg(t,18,18.8)*400;L.head.style.left=hx+'px';L.head.style.opacity=t>15.6?1:0;
+  L.blk.style.opacity=seg(t,16.6,16.8)-seg(t,18.1,18.3);L.bt.style.opacity=win(t,16.9,18.1,.2);
+  SCR.querySelector('#ctime').textContent='00:0'+Math.min(9,3+Math.floor(Math.max(0,t-15.2)));
+  const fp=[{t:5.5,at:[340,40]},{t:6.1,at:[330,330],mv:.5},{t:6.7,at:'#bri',hold:.7}];
+  if(t<10)finger(t,fp);else{const dp=[{t:10.5,at:[145,117],hold:.6,press:1}];for(let i=0;i<path.length;i++)dp.push({t:11.4+i*(3.4/(path.length-1)),at:path[i],mv:3.4/(path.length-1),lin:1,press:i<path.length-1});finger(t,dp);}}});
+// 9 Face ID
+SC.push({step:9,dur:12,badge:'ШАГ 9 • FACE ID',title:'Настройте своё лицо',caps:[[.3,'Настройки → Face ID и код‑пароль'],[2.3,'«Настроить Face ID» и медленно поворачивайте голову'],[6.4,'Настроилось с первого раза — модуль исправен'],[8.8,'«Face ID недоступен» — дорогой ремонт, не берите',1]],
+ build(){let ticks='';for(let i=0;i<72;i++)ticks+=`<div class="tk" style="position:absolute;left:194px;top:150px;width:4px;height:22px;border-radius:2px;background:#555;transform-origin:2px 180px;transform:rotate(${i*5}deg)"></div>`;
+  navBuild([[0,SETTINGS('s')],[1.2,page('Face ID и код‑пароль',`<div style="text-align:center;padding:10px 0 24px;font-size:70px">🙂</div>`+G(R('fset','Настроить Face ID',{blue:1,ch:false}))+'<div class="foot">Face ID позволяет разблокировать iPhone и подтверждать покупки.</div>'+G(R('fcode','Выключить код‑пароль',{blue:1,ch:false}),R('fch','Сменить код‑пароль',{blue:1,ch:false})),{back:'Настройки'})],
+  [2.6,`<div class="scr" style="background:#000;color:#fff;text-align:center"><div style="margin-top:90px;font-size:24px;font-weight:700" id="fidt">Медленно двигайте головой по кругу</div>${ticks}<div style="position:absolute;left:66px;top:180px;width:260px;height:300px;border-radius:50%;overflow:hidden;background:radial-gradient(#3a3a3c,#1c1c1e);display:flex;align-items:center;justify-content:center;font-size:150px" id="face">🙂</div><div id="fok" style="position:absolute;top:560px;width:100%;font-size:22px;color:#34c759;font-weight:700">✓ Face ID настроен</div></div>`]]);
+  setSB('dark');L.c=card(`<div style="background:#f2f2f7;color:#000;border-radius:14px;text-align:center;overflow:hidden"><div style="font-weight:700;padding:16px 12px 4px">Face ID недоступен</div><div style="font-size:14px;padding:0 12px 14px">Попробуйте настроить Face ID позже.</div><div style="border-top:1px solid #ccc;padding:10px;color:#0a7aff">ОК</div></div><div style="color:#ff9d9d;margin-top:14px">✕ Такое сообщение = неисправность</div>`,1575,380,310);},
+ update(t){const p=lin(t,3,6);SCR.querySelectorAll('.tk').forEach((e,i)=>e.style.background=i<p*72?'#34c759':'#555');
+  const f=SCR.querySelector('#face');f.style.transform=`translate(${Math.sin(t*3)*18*(t<6?1:0)}px,${Math.cos(t*3)*12*(t<6?1:0)}px)`;
+  SCR.querySelector('#fok').style.opacity=seg(t,6.1,6.5);setSB(t>2.6?'light':'dark');showCard(L.c,t,8.8);
+  finger(t,[{t:.9,at:'#sfid',tap:1},{t:2.3,at:'#fset',tap:1}]);}});
+// 10 camera
+SC.push({step:10,dur:14,badge:'ШАГ 10 • КАМЕРЫ',title:'Все объективы и фронталка',caps:[[.3,'Откройте «Камеру»: переключите 0,5× → 1× → 2×'],[5.4,'Нажмите на объект — фокус наводится быстро'],[7.8,'Переключитесь на фронтальную камеру'],[10,'Снимите видео на ходу: картинка плавная, звук без треска']],
+ build(){navBuild([[0,`<div class="scr" style="background:#000;color:#fff"><div style="position:absolute;left:0;top:96px;width:392px;height:540px;overflow:hidden" id="vf"><svg width="392" height="540" viewBox="0 0 392 540"><g id="scene"><rect width="392" height="540" fill="#87bfe8"/><circle cx="300" cy="110" r="38" fill="#ffd95a"/><polygon points="-40,380 90,190 220,380" fill="#6d7f9a"/><polygon points="120,380 260,150 420,380" fill="#596a85"/><polygon points="230,200 260,150 290,200" fill="#fff"/><rect y="370" width="392" height="170" fill="#5c9e52"/><rect x="88" y="300" width="14" height="90" fill="#6b4b2a"/><circle cx="95" cy="290" r="44" fill="#2f7d3a"/><rect x="250" y="330" width="70" height="56" fill="#e9d8b8"/><polygon points="244,332 285,298 326,332" fill="#b5523b"/></g></svg>
+   <div id="selfie" style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,#fbd7b8 0,#e8b894 32%,#5b6b86 33%);display:flex;align-items:center;justify-content:center;font-size:200px;opacity:0">🙂</div>
+   <div id="fsq" style="position:absolute;width:90px;height:90px;border:2px solid #ffd60a;left:50px;top:200px;opacity:0"></div></div>
+   <div style="position:absolute;top:64px;width:100%;text-align:center;font-size:16px" id="rec"></div>
+   <div style="position:absolute;top:570px;width:100%;display:flex;justify-content:center;gap:12px" id="zb">${['.5','1×','2'].map((z,i)=>`<div id="z${i}" style="width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">${z}</div>`).join('')}</div>
+   <div style="position:absolute;top:660px;width:100%;display:flex;justify-content:center;gap:20px;font-size:15px;color:#ccc"><span id="mv">ВИДЕО</span><span id="mf" style="color:#ffd60a">ФОТО</span><span>ПОРТРЕТ</span></div>
+   <div style="position:absolute;top:705px;left:158px;width:78px;height:78px;border-radius:50%;border:5px solid #fff;padding:5px"><div id="shut" style="width:100%;height:100%;border-radius:50%;background:#fff"></div></div>
+   <div id="flip" style="position:absolute;top:718px;left:300px;width:52px;height:52px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:24px">🔄</div></div>`]]);
+  setSB('light');},
+ update(t){let z=1;const zs=[.9,2.4,3.9];const lv=[1,1.7,3.1];for(let i=0;i<3;i++){if(t>zs[i]){const p=seg(t,zs[i],zs[i]+.5);z=lerp(i?lv[i-1]:1,lv[i],p);}}
+  if(t>5.2)z=lerp(lv[2],1.4,seg(t,5.2,5.6));
+  SCR.querySelector('#scene').setAttribute('transform',`translate(196 270) scale(${z}) translate(-196 -270)`);
+  const ai=t<2.4?0:t<3.9?1:2;for(let i=0;i<3;i++){const e=SCR.querySelector('#z'+i);e.style.color=(i==ai&&t<5.2)?'#ffd60a':'#fff';e.style.transform=`scale(${i==ai&&t<5.2?1.15:1})`;}
+  const fq=SCR.querySelector('#fsq');const fp=win(t,5.9,7.4,.15);fq.style.opacity=fp;fq.style.transform=`scale(${1.6-.6*seg(t,5.9,6.3)})`;
+  SCR.querySelector('#selfie').style.opacity=seg(t,8.3,8.7)-seg(t,9.9,10.2);
+  const vid=t>10.2;SCR.querySelector('#mv').style.color=vid?'#ffd60a':'#ccc';SCR.querySelector('#mf').style.color=vid?'#ccc':'#ffd60a';
+  const sh=SCR.querySelector('#shut');sh.style.background=vid?'#ff3b30':'#fff';sh.style.borderRadius=t>10.8?'8px':'50%';sh.style.transform=t>10.8?'scale(.55)':'none';
+  const rs=Math.max(0,Math.floor((t-10.8)));SCR.querySelector('#rec').innerHTML=t>10.8?`<span style="background:#ff3b30;padding:3px 10px;border-radius:6px">● 00:0${rs}</span>`:'';
+  SCR.querySelector('#vf').style.transform=t>10.8?`translate(${Math.sin(t*9)*1.5}px,${Math.cos(t*7)*1.5}px)`:'none';
+  finger(t,[{t:.9,at:'#z0',tap:1},{t:2.4,at:'#z1',tap:1},{t:3.9,at:'#z2',tap:1},{t:5.9,at:[95,341],tap:1},{t:8.1,at:'#flip',tap:1},{t:10.2,at:'#mv',tap:1},{t:10.8,at:'#shut',tap:1}]);}});
+// 11 sound & buttons
+SC.push({step:11,dur:13,badge:'ШАГ 11 • ЗВУК И КНОПКИ',title:'Звук и кнопки',caps:[[.3,'Включите музыку: звук сверху и снизу, без хрипа'],[3.6,'Запишите диктофон или видео — проверка микрофонов'],[6.4,'Позвоните с громкой связью и без'],[8.8,'Кнопки громкости, питания и переключатель «Звонок/Бесшумно»']],
+ build(){navBuild([[0,`<div class="scr" style="background:linear-gradient(#4a2a6a,#1c1c2e);color:#fff;text-align:center"><div style="margin:120px auto 30px;width:250px;height:250px;border-radius:24px;background:linear-gradient(135deg,#ff7a59,#c94bd1);display:flex;align-items:center;justify-content:center;font-size:110px">🎵</div><b style="font-size:24px">Любимый трек</b><div style="color:#bbb;margin-top:4px">Исполнитель</div><div style="margin:30px 40px 0;height:6px;border-radius:3px;background:rgba(255,255,255,.25)"><div id="mpb" style="height:100%;width:10%;background:#fff;border-radius:3px"></div></div><div style="font-size:44px;margin-top:30px">⏮ ⏸ ⏭</div></div>`],
+  [3.6,`<div class="scr" style="background:#000;color:#fff;text-align:center"><div style="margin-top:110px;font-size:26px;font-weight:700">Новая запись</div><div id="rtm" style="font-size:44px;margin-top:20px;font-variant-numeric:tabular-nums">0:00</div><div id="wave" style="height:200px;margin:60px 20px 0;display:flex;align-items:center;gap:3px"></div><div style="margin:80px auto 0;width:80px;height:80px;border-radius:50%;border:4px solid #fff;padding:6px"><div style="width:100%;height:100%;border-radius:8px;background:#ff3b30;transform:scale(.6)"></div></div></div>`,{fade:1}],
+  [6.4,`<div class="scr" style="background:linear-gradient(#3a3a3c,#1c1c1e);color:#fff;text-align:center"><div style="margin-top:120px;font-size:30px">Друг</div><div style="color:#aaa;margin-top:6px">00:12</div><div style="display:grid;grid-template-columns:repeat(3,80px);gap:28px;justify-content:center;margin-top:220px">${['🔇','⌨️','🔊','➕','📹','👤'].map((e,i)=>`<div id="cb${i}" style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:30px">${e}</div>`).join('')}</div></div>`,{fade:1}]]);
+  setSB('light');let w='';for(let i=0;i<60;i++)w+=`<div class="wb" style="flex:1;background:#ff3b30;border-radius:2px;height:2px"></div>`;SCR.querySelector('#wave').innerHTML=w;
+  L.w=[];for(let i=0;i<3;i++){L.w.push(mk(OV,`<div style="position:absolute;left:146px;top:-50px;width:100px;height:100px;border-radius:50%;border:4px solid #7fb2ff"></div>`));L.w.push(mk(OV,`<div style="position:absolute;left:146px;top:782px;width:100px;height:100px;border-radius:50%;border:4px solid #7fb2ff"></div>`));}
+  L.hud=mk(OV,`<div style="position:absolute;left:14px;top:200px;width:46px;height:150px;border-radius:23px;background:rgba(60,60,70,.8);overflow:hidden"><div id="vl" style="position:absolute;bottom:0;left:0;right:0;background:#fff;height:50%"></div><div style="position:absolute;bottom:8px;width:100%;text-align:center;font-size:18px">🔊</div></div>`);
+  L.sil=mk(OV,`<div style="position:absolute;top:60px;left:96px;width:200px;height:44px;border-radius:22px;background:#1c1c1e;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px" id="silt">🔕 Бесшумно</div>`);
+  L.bl=['Звонок/Бесшумно','Громкость +','Громкость −'].map((s,i)=>mk(EXTRA,`<div class="tag" style="background:#3b6fd8;font-size:18px;right:${1920-1105}px;top:${PY+[150,230,315][i]}px">${s}</div>`));
+  L.pl=mk(EXTRA,`<div class="tag" style="background:#3b6fd8;font-size:18px;left:1560px;top:${PY+290}px">Питание</div>`);},
+ update(t){const sound=t<3.6||(t>7.2&&t<8.8);for(let i=0;i<6;i++){const ph=((t*1.2+Math.floor(i/2)/3)%1);L.w[i].style.opacity=sound?(1-ph)*.9:0;L.w[i].style.transform=`scale(${.4+ph*2.2})`;}
+  SCR.querySelector('#mpb').style.width=(10+t*4)+'%';SCR.querySelector('#rtm').textContent='0:0'+Math.max(0,Math.floor(t-3.6));
+  SCR.querySelectorAll('.wb').forEach((b,i)=>{const on=i/60<lin(t,3.8,6.2);b.style.height=on?(8+Math.abs(Math.sin(i*1.7)*Math.cos(i*.31))*150)+'px':'2px';});
+  const cb=SCR.querySelector('#cb2');cb.style.background=t>7.2?'#fff':'rgba(255,255,255,.18)';
+  const bt=[['b-sw',9.0,9.8],['b-vu',10.0,10.8],['b-vd',10.9,11.6],['b-pw',11.8,12.6]];bt.forEach(([id,a,b],i)=>{const on=t>a&&t<b;$(id).classList.toggle('hot',on);if(i<3)L.bl[i].style.opacity=win(t,a,b+.3,.15);else L.pl.style.opacity=win(t,a,b,.15);});
+  L.sil.style.opacity=win(t,9.0,9.9,.15);L.hud.style.opacity=win(t,10,11.8,.15);$('vl').style.height=(t<10.9?50+lin(t,10,10.8)*35:85-lin(t,10.9,11.6)*45)+'%';
+  finger(t,[{t:6.9,at:'#cb2',tap:1}]);}});
+// 12 connectivity
+SC.push({step:12,dur:13,badge:'ШАГ 12 • СВЯЗЬ',title:'SIM, интернет, модули',caps:[[.3,'Вставьте свою SIM или eSIM: появляется сеть и 5G'],[3.6,'Wi‑Fi и Bluetooth: подключите сеть и наушники'],[6.6,'Карты: геопозиция определяется точно'],[9.4,'NFC: приложите карту к задней части у камер']],
+ build(){navBuild([[0,LOCK()],[3.6,HOME(),{fade:1}],[6.6,`<div class="scr" style="background:#f1ede4"><svg width="392" height="832" style="position:absolute;inset:0"><g stroke="#fff" stroke-width="16">${[120,260,420,600,740].map(y=>`<line x1="0" y1="${y}" x2="392" y2="${y-60}"/>`).join('')}${[60,190,320].map(x=>`<line x1="${x}" y1="0" x2="${x+40}" y2="832"/>`).join('')}</g><rect x="210" y="300" width="90" height="70" fill="#c8e6c0" rx="8"/><rect x="20" y="460" width="120" height="90" fill="#c8e6c0" rx="8"/><path d="M0 680 Q200 640 392 700" stroke="#9cc9ee" stroke-width="30" fill="none"/></svg><div style="position:absolute;left:12px;right:12px;top:58px;background:#fff;border-radius:14px;padding:12px 14px;color:#777;box-shadow:0 2px 8px rgba(0,0,0,.15)">🔍 Поиск на карте</div></div>`,{fade:1}]]);
+  setSB('light',{sig:0});L.cc=mk(OV,`<div style="position:absolute;inset:0;background:rgba(20,20,30,.6);backdrop-filter:blur(14px)"><div style="position:absolute;left:30px;top:110px;display:grid;grid-template-columns:repeat(2,150px);gap:16px">${['📶 Wi‑Fi','ᛒ Bluetooth','📡 Сотовая','✈️ Авиарежим'].map((e,i)=>`<div id="cct${i}" style="height:72px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">${e}</div>`).join('')}</div><div id="apb" style="position:absolute;left:30px;right:30px;top:330px;border-radius:20px;background:rgba(255,255,255,.92);padding:16px;display:flex;gap:12px;align-items:center;font-size:17px"><span style="font-size:32px">🎧</span><div><b>Наушники</b><div class="sub">Подключено ✓</div></div></div></div>`);
+  L.dot=mk(OV,`<div style="position:absolute;left:186px;top:420px;width:22px;height:22px;margin:-11px;border-radius:50%;background:#0a7aff;border:4px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`);L.halo=mk(OV,`<div style="position:absolute;left:186px;top:420px;width:120px;height:120px;margin:-60px;border-radius:50%;background:rgba(10,122,255,.2)"></div>`);
+  L.lt=mk(OV,`<div class="tag" style="background:#1f9d55;left:110px;top:470px">✓ Вы здесь, точность 5 м</div>`);
+  L.sheet=mk(OV,`<div style="position:absolute;left:10px;right:10px;bottom:10px;height:260px;border-radius:40px;background:#fff;text-align:center;padding-top:40px;color:#000"><div style="font-size:60px">💳</div><b style="font-size:22px">Карта обнаружена</b><div class="sub" style="font-size:16px;margin-top:6px">NFC работает ✓</div></div>`);
+  L.card=mk(EXTRA,`<div style="position:absolute;width:250px;height:156px;border-radius:16px;background:linear-gradient(135deg,#2b2f77,#7a3fd1);box-shadow:0 20px 40px rgba(0,0,0,.5);color:#fff;padding:18px;font-size:16px"><div style="width:44px;height:34px;border-radius:6px;background:#e9c46a;margin-bottom:40px"></div>•••• 4821</div>`);
+  L.sig=mk(EXTRA,`<div class="tag" style="background:#1f9d55;font-size:20px;left:1575px;top:150px">✓ Сеть есть: 5G</div>`);},
+ update(t){const lv=Math.round(seg(t,1.2,2.6)*4);setSB(t>6.6&&t<11?'dark':'light',{sig:lv,net:t>2.4?'5G':''});
+  L.sig.style.opacity=win(t,2.6,3.6,.2);L.cc.style.opacity=win(t,3.9,6.5,.25);
+  ['#cct0','#cct1'].forEach((s,i)=>SCR.querySelector(s).style.background=t>4.6+i*.7?'#0a7aff':'rgba(255,255,255,.2)');SCR.querySelector('#apb').style.opacity=seg(t,5.6,5.9);
+  const d=win(t,7.1,9.3,.3);L.dot.style.opacity=d;L.lt.style.opacity=win(t,7.6,9.3,.25);const ph=(t*1.1)%1;L.halo.style.opacity=d*(1-ph);L.halo.style.transform=`scale(${.3+ph})`;
+  const r=seg(t,9.4,10)-seg(t,9.4+3.2,9.4+3.6)*0;phoneT({ry:r*180*0});
+  const cx=lerp(1700,1360,seg(t,9.6,10.6)),cy=lerp(560,200,seg(t,9.6,10.6));L.card.style.left=cx+'px';L.card.style.top=cy+'px';L.card.style.opacity=win(t,9.5,12.9,.3);L.card.style.transform=`rotate(${lerp(18,-8,seg(t,9.6,10.6))}deg)`;
+  L.sheet.style.opacity=win(t,10.8,12.9,.25);L.sheet.style.transform=`translateY(${(1-seg(t,10.8,11.2))*200}px)`;
+  finger(t,[{t:3.9,at:[340,40]},{t:4.6,at:'#cct0',tap:1},{t:5.3,at:'#cct1',tap:1}]);}});
+// 13 charging
+SC.push({step:13,dur:12,badge:'ШАГ 13 • ЗАРЯДКА',title:'Разъём USB‑C и беспроводная',caps:[[.3,'Подключите кабель: зарядка идёт, штекер не болтается'],[4.4,'Беспроводная зарядка MagSafe / Qi'],[8,'Подключите к ноутбуку — появится «Доверять этому компьютеру?»']],
+ build(){navBuild([[0,LOCK(`<div id="chg" style="position:absolute;top:400px;width:100%;font-size:22px;font-weight:600"><div id="ring" style="width:150px;height:150px;margin:0 auto 14px;border-radius:50%;border:8px solid #34c759;display:flex;align-items:center;justify-content:center;font-size:56px">⚡</div><span id="chgt">Заряжается: 47%</span></div>`)]]);setSB('light');
+  L.cab=mk(EXTRA,`<div style="position:absolute;left:1305px;width:50px"><div style="width:30px;height:46px;margin:0 auto;border-radius:8px;background:linear-gradient(90deg,#cfd3da,#fff,#cfd3da)"></div><div style="width:50px;height:60px;border-radius:12px;background:#f2f2f2"></div><div style="width:16px;height:400px;margin:0 auto;background:#f2f2f2"></div></div>`);
+  L.puck=mk(EXTRA,`<div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(#fafafa 0 55%,#d8d8d8 56% 100%);box-shadow:0 20px 50px rgba(0,0,0,.5)"></div>`);
+  L.al=mk(OV,`<div class="alert" style="top:300px"><div class="at">Доверять этому компьютеру?</div><div class="am">Ваши настройки и данные будут доступны с этого компьютера.</div><div class="ab"><div>Не доверять</div><div id="trust">Доверять</div></div></div>`);
+  L.lap=card(`<div style="font-size:70px;text-align:center">💻</div><div style="text-align:center;margin-top:6px">Ноутбук видит iPhone<br><span style="color:#9fe3b8">✓ Передача данных работает</span></div>`,1575,420,300);},
+ update(t){const cy=lerp(1100,PY+855,seg(t,.6,1.6))+seg(t,4,4.4)*300;L.cab.style.top=cy+'px';L.cab.style.opacity=t<4.4?1:0;
+  const on=(t>1.6&&t<4.4)||(t>6.6&&t<8.2);SCR.querySelector('#chg').style.opacity=on?1:0;SCR.querySelector('#ring').style.transform=`scale(${on?1+.06*Math.sin(t*6):1})`;
+  SCR.querySelector('#chgt').textContent=t>6?'MagSafe: заряжается 48%':'Заряжается: 47%';
+  const ry=seg(t,4.4,5.2)*180-seg(t,6.3,7)*180;phoneT({ry});
+  const px=lerp(1900,1230,seg(t,5.2,6)),py=440;L.puck.style.left=px+'px';L.puck.style.top=py+'px';L.puck.style.opacity=(t>5&&t<6.4)?1:0;
+  $('msring').style.borderColor=`rgba(255,255,255,${win(t,5.9,6.4,.15)})`;
+  const a=win(t,8.2,11.8,.25);L.al.style.opacity=a;SCR.querySelector('#trust').style.background=(t>9.6&&t<9.9)?'#d6d6db':'transparent';
+  showCard(L.lap,t,10);finger(t,[{t:9.6,at:'#trust',tap:1}]);}});
+// 14 load
+SC.push({step:14,dur:14,badge:'ШАГ 14 • НАГРУЗКА',title:'Перегрев и скрытые сбои',caps:[[.3,'10–15 минут: видео 4K или тяжёлая игра'],[4.6,'Тёплый корпус — норма. Обжигает или перезагружается — нет'],[7.6,'Настройки → Конфиденциальность → Аналитика → Данные аналитики'],[11,'Много файлов «panic‑full» — аппаратная проблема',1]],
+ build(){navBuild([[0,`<div class="scr" style="background:#000;color:#fff"><div style="position:absolute;top:96px;left:0;width:392px;height:540px;background:linear-gradient(#87bfe8,#5c9e52)"></div><div style="position:absolute;top:64px;width:100%;text-align:center"><span id="rt" style="background:#ff3b30;padding:3px 10px;border-radius:6px;font-size:16px;font-variant-numeric:tabular-nums">● 00:00</span></div><div style="position:absolute;top:600px;width:100%;text-align:center;font-size:15px;color:#ffd60a">4K · 60</div></div>`],
+  [7.6,SETTINGS('s'),{fade:1}],[8.4,page('Конфиденциальность',G(R('p1','Службы геолокации',{ic:'➤',c:'#0a7aff'}),R('p2','Отслеживание',{ic:'🔄',c:'#ff9500'}))+G(R('p3','Контакты',{ic:'👤',c:'#8e8e93'}),R('p4','Фото',{ic:'🖼️',c:'#ff9500'}))+G(R('pan','Аналитика и улучшения',{ic:'📊',c:'#0a7aff'})),{back:'Настройки'})],
+  [9.3,page('Аналитика',G(R('an1','Делиться аналитикой iPhone',{tg:true}))+G(R('an2','Данные аналитики')),{back:'Конфиденциальность'})],
+  [10.2,page('Данные аналитики',G(...['Analytics-2026-11-04','panic-full-2026-11-03','JetsamEvent-2026-11-02','panic-full-2026-11-01','panic-full-2026-10-29','Analytics-2026-10-28'].map((n,i)=>R('ad'+i,n,{cls:n.startsWith('panic')?'pan':''}))),{back:'Аналитика'})]]);
+  setSB('light');L.th=card(`<h3>ТЕМПЕРАТУРА</h3><div style="display:flex;gap:20px;align-items:flex-end"><div style="position:relative;width:40px;height:260px;border-radius:20px;background:#2a3044;overflow:hidden"><div id="thf" style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#ffb020,#34c759);height:5%"></div></div><div style="font-size:18px;line-height:2.1"><span style="color:#ff9d9d">Горячо ✕</span><br><span style="color:#ffd27f">Очень тепло</span><br><span style="color:#9fe3b8">Тепло ✓</span><br><span style="color:#9fe3b8">Норма</span></div></div><div id="tht" style="font-size:24px;margin-top:10px;font-weight:700">Тепло — норма ✓</div>`,1575,300,300);
+  L.p=[...SCR.querySelectorAll('.pan')].map(e=>hlBox(e,'#ff3b30',null,{pad:0}));},
+ update(t){const s=Math.floor(lin(t,.5,4.6)*900);SCR.querySelector('#rt').textContent=`● ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  setSB(t<7.6?'light':'dark');showCard(L.th,t,.8,7.5);$('thf').style.height=(5+seg(t,1,4.6)*55)+'%';$('tht').style.opacity=seg(t,4.6,5);
+  L.p.forEach(h=>h.set(win(t,11,13.7)));finger(t,[{t:8.1,at:'#spriv',tap:1},{t:9.0,at:'#pan',tap:1},{t:9.9,at:'#an2',tap:1}]);}});
+// 15 deal
+SC.push({step:15,dur:12,badge:'ШАГ 15 • СДЕЛКА',title:'Документы и оплата',caps:[[.3,'Платите только после всех проверок и сброса'],[3.4,'Возьмите чек, коробку и документы'],[6,'Сфотографируйте паспорт продавца или возьмите расписку'],[8.6,'Цена сильно ниже рынка — почти всегда подвох',1]],
+ build(){const items=['IMEI проверен','Внешний вид','IMEI совпадает','Модель и регион','Apple ID вышел','Детали оригинал','Батарея ≥ 85%','Экран и True Tone','Face ID','Камеры','Звук и кнопки','Связь и NFC','Зарядка','Нет перегрева'];
+  navBuild([[0,`<div class="scr" style="background:#fff"><div style="margin-top:60px;padding:0 22px"><div style="color:#e0a800;font-size:17px">‹ Заметки</div><div style="font-size:30px;font-weight:800;margin:10px 0 12px">Чек‑лист iPhone 15</div>${items.map((s,i)=>`<div style="display:flex;gap:12px;align-items:center;height:42px;font-size:18px"><div id="cx${i}" style="width:26px;height:26px;border-radius:50%;border:2px solid #c7c7cc;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px">✓</div><span id="ct${i}">${s}</span></div>`).join('')}</div></div>`]]);setSB('dark');L.n=items.length;
+  L.cs=[['📦','Коробка'],['🧾','Чек'],['🪪','Паспорт / расписка']].map(([e,l],i)=>card(`<div style="display:flex;gap:16px;align-items:center"><span style="font-size:44px">${e}</span><b style="font-size:21px">${l}</b></div>`,1575,250+i*130,300));
+  L.w=card(`<div style="font-size:40px">💸</div><div style="color:#ff9d9d;font-weight:700;margin:6px 0">Слишком дёшево?</div>Скорее всего краденый, восстановленный или с проблемой.`,1575,660,300);},
+ update(t){for(let i=0;i<L.n;i++){const on=t>.5+i*.2;const c=SCR.querySelector('#cx'+i);c.style.background=on?'#34c759':'#fff';c.style.borderColor=on?'#34c759':'#c7c7cc';SCR.querySelector('#ct'+i).style.color=on?'#8e8e93':'#000';}
+  L.cs.forEach((c,i)=>showCard(c,t,3.6+i*.5+(i==2?2:0)));showCard(L.w,t,8.8);}});
+// 16 red flags
+SC.push({dur:14,badge:'ИТОГ',title:'Красные флаги — не покупайте',caps:[[.4,'Не выходит из Apple ID / Локатор не отключается',1],[2.6,'IMEI не совпадает или не проходит проверку',1],[4.8,'«Неизвестная деталь», нет True Tone, Face ID недоступен',1],[7,'Вздутие экрана, ёмкость ниже 80%, перезагрузки',1],[9.2,'Продавец торопит и не даёт всё проверить',1]],
+ build(){navBuild([[0,`<div class="scr" style="background:linear-gradient(160deg,#5a1218,#1c0507);color:#fff;text-align:center"><div style="margin-top:250px;font-size:150px;line-height:1;color:#ff4d4f">✕</div><div style="font-size:34px;font-weight:800;margin-top:20px">Не покупать</div><div style="color:#f3b0b0;margin-top:10px;font-size:18px">если есть хоть один пункт</div></div>`]]);setSB('light');},
+ update(t){const k=1+.04*Math.sin(t*4);SCR.querySelector('.scr div').style.transform=`scale(${k})`;}});
+// 17 outro
+SC.push({dur:6,badge:'ГОТОВО',title:'Удачной покупки!',caps:[[.4,'Сохраните видео и пройдите шаги прямо на встрече'],[1.6,'Не торопитесь: проверка занимает 20–30 минут']],
+ build(){navBuild([[0,LOCK(`<div style="position:absolute;top:420px;width:100%;font-size:100px">✅</div>`)]]);setSB('light');},
+ update(t){}});
+// ---------- engine
+let cum=0;SC.forEach(s=>{s.start=cum;cum+=s.dur;});window.TOTAL=cum;
+const prog=$('prog');for(let i=1;i<=15;i++)mk(prog,'<div></div>');
+let curIdx=-1;
+function buildScene(i){const s=SC[i];CONTENT.innerHTML='';OV.innerHTML='';EXTRA.innerHTML='';L={};phoneT();$('phoneWrap').style.opacity=1;
+ document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('hot'));$('msring').style.borderColor='transparent';
+ $('badge').textContent=s.badge;$('title').textContent=s.title;
+ $('caps').innerHTML=s.caps.map((c,j)=>`<div class="cap${c[2]?' warn':''}" id="cap${j}"><div class="ic">${c[2]?'!':j+1}</div><div>${c[1]}</div></div>`).join('');
+ [...prog.children].forEach((d,j)=>d.className=s.step?(j+1<s.step?'d':j+1==s.step?'c':''):(i>0?'d':''));
+ $('steplbl').textContent=s.step?`ШАГ ${s.step} ИЗ 15`:'';s.build();}
+window.renderAt=function(T){let i=SC.findIndex(s=>T>=s.start&&T<s.start+s.dur);if(i<0)i=SC.length-1;if(i!==curIdx){buildScene(i);curIdx=i;}
+ const s=SC[i],t=T-s.start;
+ s.caps.forEach((c,j)=>{const e=$('cap'+j);const p=seg(t,c[0],c[0]+.45);e.style.opacity=p;e.style.transform=`translateX(${(1-p)*-30}px)`;const nx=s.caps[j+1];const on=t>=c[0]&&(!nx||t<nx[0]);e.classList.toggle('on',on);e.classList.toggle('done',!!nx&&t>=nx[0]&&!c[2]);});
+ navUpdate(t);s.update(t);
+ const fo=Math.min(seg(t,0,.4),1-seg(t,s.dur-.35,s.dur));$('left').style.opacity=fo;SCR.style.filter=`brightness(${i==0?1:.35+.65*fo})`;EXTRA.style.opacity=fo;
+ if(i==SC.length-1){document.body.style.filter=`brightness(${1-seg(t,s.dur-1.2,s.dur)})`;}else document.body.style.filter='none';};
+renderAt(0);
+</script></body></html>
